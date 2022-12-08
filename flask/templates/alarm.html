@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="Chameleon Admin is a modern Bootstrap 4 webapp &amp; admin dashboard html template with a large number of components, elegant design, clean and organized code.">
+    <meta name="keywords" content="admin template, Chameleon admin template, dashboard template, gradient admin template, responsive admin template, webapp, eCommerce dashboard, analytic dashboard">
+    <meta name="author" content="ThemeSelect">
+    <title>Dashboard - Chameleon Admin - Modern Bootstrap 4 WebApp & Dashboard HTML Template + UI Kit</title>
+    <link rel="apple-touch-icon" href="/static/theme-assets/images/ico/apple-icon-120.png">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700" rel="stylesheet">
+    <link href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css" rel="stylesheet">
+    <!-- BEGIN VENDOR CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/vendors.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/vendors/css/charts/chartist.css">
+    <!-- END VENDOR CSS-->
+    <!-- BEGIN CHAMELEON  CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/app-lite.css">
+    <!-- END CHAMELEON  CSS-->
+    <!-- BEGIN Page Level CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/core/menu/menu-types/vertical-menu.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/core/colors/palette-gradient.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/pages/dashboard-ecommerce.css">
+    <!-- END Page Level CSS-->
+    <!-- BEGIN Custom CSS-->
+    <!-- END Custom CSS-->
+  </head>
+  <body class="vertical-layout vertical-menu 2-columns   menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-color="bg-gradient-x-purple-blue" data-col="2-columns">
+
+    <!-- fixed-top-->
+    <nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
+      <div class="navbar-wrapper">
+        <div class="navbar-container content">
+          <div class="collapse navbar-collapse show" id="navbar-mobile">
+            <ul class="nav navbar-nav mr-auto float-left">
+              <li class="nav-item d-block d-md-none"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="ft-menu"></i></a></li>
+              <li class="nav-item d-none d-md-block"><a class="nav-link nav-link-expand" href="#"><i class="ficon ft-maximize"></i></a></li>
+              <li class="nav-item dropdown navbar-search"><a class="nav-link dropdown-toggle hide" data-toggle="dropdown" href="#"><i class="ficon ft-search"></i></a>
+                <ul class="dropdown-menu">
+                  <li class="arrow_box">
+                    <form>
+                      <div class="input-group search-box">
+                        <div class="position-relative has-icon-right full-width">
+                          <input class="form-control" id="search" type="text" placeholder="Search here...">
+                          <div class="form-control-position navbar-search-close"><i class="ft-x">   </i></div>
+                        </div>
+                      </div>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ////////////////////////////////////////////////////////////////////////////-->
+
+<!--좌측 배너-->
+    <div class="main-menu menu-fixed menu-light menu-accordion    menu-shadow " data-scroll-to-active="true" data-img="/static/theme-assets/images/backgrounds/02.jpg">
+      <div class="navbar-header">
+        <ul class="nav navbar-nav flex-row">       
+          <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
+              <h3 class="brand-text" >Chameleon</h3></a></li>
+          <li class="nav-item d-md-none"><a class="nav-link close-navbar"><i class="ft-x"></i></a></li>
+        </ul>
+      </div>
+      <div class="main-menu-content">
+        <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+          <li class="active"><a href="/"><i class="ft-home"></i><span class="menu-title" data-i18n="">Dashboard</span></a>
+          </li>
+          <li class=" nav-item"><a href="/alarm"><i class="ft-layers"></i><span class="menu-title" data-i18n="">Alerting</span></a>
+          </li>
+          <li class=" nav-item"><a href="/live-data"><i class="ft-droplet"></i><span class="menu-title" data-i18n="">JsonData</span></a>
+          </li>
+        </ul>
+      </div>
+      <div class="navigation-background"></div>
+    </div>
+
+
+<!--좌측 배너-->
+
+
+    <!-- ////////////////////////////////////////////////////////////////////////////-->
+
+    <div class="app-content content">
+      <div class="content-wrapper">
+        <div class="content-wrapper-before"></div>
+        <div class="content-header row">
+          <div class="content-header-left col-md-4 col-12 mb-2">
+            <h3 class="content-header-title">Alerting</h3>
+          </div>
+        </div>
+        <div class="content-body"><!-- Basic Inputs start -->
+
+<section class="textarea-select">
+  <!-- Textarea start -->
+  <div class="row">
+      <div class="col-12 mt-3 mb-1">
+          <h4 class="content-header-title ">알림을 설정하세요</h4>
+          <p>설정된 값을 초과하면 경고 알림이 갑니다.
+          </p>
+      </div>
+  </div>
+  <div class="row match-height">
+      <div class="col-lg-12 col-md-12">
+          <div class="card">
+              <div class="card-header">
+                  <h4 class="card-title">알람 등록 및 수정</h4>
+              </div>
+              <div class="card-block">
+                <div class="card-body">              
+                {% if runconList %}     
+                <form action="/alarm_action" method="get">
+                     <h5 class="mt-2">컨테이너 이름</h5>
+                      <fieldset class="form-group">
+                          <select class="form-control" id="basicSelect" name="con_name">                                      
+                            <option>Select Option</option>
+                        {% for name in runconList %}
+                            <option> {{ name }} </option>
+                        {% endfor %}                      
+                          </select>
+                      </fieldset>                    
+                  <h5 class="mt-2">CPU%</h5>
+                    <fieldset class="form-group">
+                      <select class="form-control" id="basicSelect" name="cpu_per">
+                        <option>Select Option</option>                        
+                        <option value="1">1 %</option>                  
+                        <option value="5">5 %</option>
+                        <option value="40">40 %</option>
+                        <option value="50">50 %</option>
+                        <option value="60">60 %</option> 
+                        <option value="70">70 %</option>
+                        <option value="80">80 %</option>                            
+                        <option value="90">90 %</option>
+                        <option>사용자 입력</option>
+                      </select>
+                    </fieldset>
+                  <h5 class="mt-2">Memory</h5>
+                 <!-- <p>To use custom select add class<code>.custom-select</code> to select.</p>
+              -->   <fieldset class="form-group">
+                      <select class="form-control" id="basicSelect" name="mem_usage_MiB">
+                        <option>Select Option</option>
+                        <option value="5">5</option>
+                        <option value="15">15</option>
+                        <option value="25">25</option>
+                        <option value="35">35</option>
+                        <option value="45">45</option>                            
+                        <option value="55">55</option>
+                        <option>사용자 입력</option>
+                      </select>
+                    </fieldset>
+                  <h5 class="mt-2">Network I/O</h5>
+                   <!-- <p>To use custom select add class<code>.custom-select</code> to select.</p>
+              -->   <fieldset class="form-group">
+                      <select class="form-control" id="basicSelect" name="net_I_kB">
+                        <option>Select Option</option>
+                        <option value="100">100</option>
+                        <option value="300">300</option>
+                        <option value="400">400</option>
+                        <option value="500">500</option>
+                        <option value="600">600</option>
+                        <option value="700">700</option>                            
+                        <option value="800">800</option>
+                        <option>사용자 입력</option>
+                      </select>
+                    </fieldset>
+                  <input type="submit" class="btn btn-primary btn-min-width mr-2 mb-1" style="float: right;" value="등록">
+                </form>
+                {% else %}
+                <p>실행중인 컨테이너가 없어 알람을 등록할 수 없습니다</p>
+                {% endif %}  
+                </div>                  
+              </div>
+          </div>
+      </div>
+  </div>
+  <!-- Textarea end -->
+</section>
+
+<!-- Striped rows start -->
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">등록된 알람</h4>
+<!--				<a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+				<div class="heading-elements">
+					<ul class="list-inline mb-0">
+						<li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+						<li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+						<li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+						<li><a data-action="close"><i class="ft-x"></i></a></li>
+					</ul>
+				</div>
+-->			</div>
+			<div class="card-content collapse show">
+				<div class="card-body">
+				</div>
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col"> </th>                
+								<th scope="col">Container name</th>
+								<th scope="col">CPU %</th>
+								<th scope="col">Memory</th>
+								<th scope="col">Network I/O</th>
+							</tr>
+						</thead>
+						<tbody>
+        {% if alarmList.bool %}
+          {% for i in range(alarmsize)%}
+                <tr>
+                  <th scope="row">{{i}}</th>
+                  <td>{{ alarmList['con_name'][i] }}</td>
+                  <td>{{ alarmList['cpu_per'][i] }}</td>
+                  <td>{{ alarmList['mem_usage_MiB'][i] }}</td>                  
+                  <td>{{ alarmList['net_I_kB'][i] }}</td>
+                </tr>
+            {% endfor %}   
+        {% else%}          
+            <p>등록된 알람이 없습니다.</p>
+        {% endif %}   
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Striped rows end -->
+
+
+</div>
+</div>
+</div>
+<!-- Basic Inputs end -->
+
+
+<!-- ////////////////////////////////////////////////////////////////////////////////-->
+
+    <footer class="footer footer-static footer-light navbar-border navbar-shadow">
+      <div class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2"><span class="float-md-left d-block d-md-inline-block">2018  &copy; Copyright <a class="text-bold-800 grey darken-2" href="https://themeselection.com" target="_blank">ThemeSelection</a></span>
+        <ul class="list-inline float-md-right d-block d-md-inline-blockd-none d-lg-block mb-0">
+          <li class="list-inline-item"><a class="my-1" href="https://themeselection.com/" target="_blank"> More themes</a></li>
+          <li class="list-inline-item"><a class="my-1" href="https://themeselection.com/support" target="_blank"> Support</a></li>
+          <li class="list-inline-item"><a class="my-1" href="https://themeselection.com/products/chameleon-admin-modern-bootstrap-webapp-dashboard-html-template-ui-kit/" target="_blank"> Purchase</a></li>
+        </ul>
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="Chameleon Admin is a modern Bootstrap 4 webapp &amp; admin dashboard html template with a large number of components, elegant design, clean and organized code.">
+    <meta name="keywords" content="admin template, Chameleon admin template, dashboard template, gradient admin template, responsive admin template, webapp, eCommerce dashboard, analytic dashboard">
+    <meta name="author" content="ThemeSelect">
+    <title>Dashboard - Chameleon Admin - Modern Bootstrap 4 WebApp & Dashboard HTML Template + UI Kit</title>
+    <link rel="apple-touch-icon" href="/static/theme-assets/images/ico/apple-icon-120.png">
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700" rel="stylesheet">
+    <link href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css" rel="stylesheet">
+    <!-- BEGIN VENDOR CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/vendors.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/vendors/css/charts/chartist.css">
+    <!-- END VENDOR CSS-->
+    <!-- BEGIN CHAMELEON  CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/app-lite.css">
+    <!-- END CHAMELEON  CSS-->
+    <!-- BEGIN Page Level CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/core/menu/menu-types/vertical-menu.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/core/colors/palette-gradient.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme-assets/css/pages/dashboard-ecommerce.css">
+    <!-- END Page Level CSS-->
+    <!-- BEGIN Custom CSS-->
+    <!-- END Custom CSS-->
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+
+
+<script> 
+
+var chart;
+var chart_net = [];
+var chart_block = [];
+var cpuseries = [];
+var index = [];
+var runconList = [];
+var alarm = [];
+var cpucol=[];
+var memcol = [];
+var m = 0;
+var green = "#B0E0E6";
+var red = "#FF6347";
+var cpuid=[];
+var memid=[];
+
+runconList.push( {{ runconList | safe }})
+index.push( {{ index | safe }})
+cpuseries.push( {{ cpuser | safe}})
+alarm.push( {{ alarm | safe }} )
+  // 0 : con_name  1 : cpu_per   2:mem_usage_MiB   3:net_I
+function requestData() {
+    $.ajax({
+        url: '/live-data',
+        success: function(point) {
+            var series = chart.series[0],
+                shift = series.data.length > 20; // shift if the series is
+            
+
+            m = 0;
+            for( i = 0; i < runconList[0].length; i++){
+                cpucol[i] = green;
+                memcol[i] = green;
+            }
+
+            // add the point
+               //   point[0]  :  0번째 컨테이너의 정보 사용
+               //   point[0][0]  :  컨테이너 상태 저장 시간
+               //   point[0][1]  :  컨테이너 상태 : constats[con]
+                for(i = 0; i < chart.series.length; i++){
+                    chart.series[i].addPoint([point[i][0], point[i][1]['cpu_per'][index[0][i]]], true, shift);
+                    if(alarm[0].length != 0){
+                      for(k = 0; k < alarm[0].length; k++){
+                        if(runconList[0][i] == alarm[0][k][0])
+                          if( point[i][1]['cpu_per'][index[0][i]] >= alarm[0][k][1]){
+                            cpucol[i] = "#FF6347";
+                          }
+                      }
+                   }
+                }
+
+              // network input, output point
+              for(i = 0; i < chart_net.length; i++){
+                   chart_net[i].series[0].addPoint([point[i][0], point[i][1]['net_I_kB'][index[0][i]]], true, shift);
+                   chart_net[i].series[1].addPoint([point[i][0], point[i][1]['net_O_kB'][index[0][i]]], true, shift);
+                   if(alarm[0].length != 0){
+                      for(k = 0; k < alarm[0].length; k++){
+                        if(runconList[0][i] == alarm[0][k][0])
+                          if( point[i][1]['net_I_kB'][index[0][i]] >= alarm[0][k][3]){
+                            chart_net[i].chartBackground.element.attributes[0].nodeValue="#FF6347";
+                          }
+                      }
+                   }
+              }
+
+              // block input, output point
+              for(i = 0; i < chart_net.length; i++){
+                   chart_block[i].series[0].addPoint([point[i][0], point[i][1]['Block_I_MB'][index[0][i]]], true, shift);
+                   chart_block[i].series[1].addPoint([point[i][0], point[i][1]['Block_O_MB'][index[0][i]]], true, shift);
+              }
+
+               //mem pie
+              var contents = [];
+              var all = 100.0;
+              var sum = 0;
+              for(i = 0; i < runconList[0].length; i++){
+                contents.push({
+                  name : runconList[0][i],
+                  y : point[i][1]['mem_per'][index[0][i]]
+                })
+                sum += point[i][1]['mem_per'][index[0][i]]
+
+                if(alarm[0].length != 0){
+                  for(k = 0; k < alarm[0].length; k++){
+                    if(runconList[0][i] == alarm[0][k][0])
+                      if( point[i][1]['mem_per'][index[0][i]] >= alarm[0][k][2]){
+                        memcol[i] = "#FF6347";
+                      }
+                  }
+               }                
+              }
+              var None = all - sum;              
+              contents.push({
+                name : "None",
+                y : None
+              })
+              pie_chart.series[0].update({
+                data : contents
+              })
+
+
+              for(i = 0; i < runconList[0].length; i++){
+                document.getElementById(cpuid[i]).style.color=cpucol[i];                
+                document.getElementById(memid[i]).style.color=memcol[i];
+              }
+
+
+        },
+        cache: false
+    });
+}
+
+$(document).ready(function() {
+  chart = new Highcharts.Chart({
+      chart: {
+          renderTo: 'cpu-data',
+          type: 'spline',
+          events: {
+              load: requestData
+          }
+      },
+      title: {
+          text: 'CPU %'
+      },
+      xAxis: {
+          type: 'datetime',
+          tickPixelInterval: 150,
+          maxZoom: 20 * 1000
+      },
+      yAxis: {
+          minPadding: 0.2,
+          maxPadding: 0.2,
+          title: {
+              text: '%',
+              margin: 80
+          }
+      },
+      series: cpuseries,
+  });
+
+  pie_chart = new Highcharts.Chart({
+      chart: {
+          renderTo: 'mem-pi',
+          type: 'pie',
+          events: {
+              load: requestData
+          }
+      },
+      title: {
+          text: 'Memory %'
+      },
+      series: [{
+        showInLegend: true,
+        data: []
+      }],
+  });
+
+  for( i = 0; i < runconList[0].length; i++){
+    cpucol.push(green);
+    memcol.push(green);
+    cpuid.push(runconList[0][i]+"cpu");
+    memid.push(runconList[0][i]+"mem");
+    chart_net.push(
+        new Highcharts.Chart({
+            chart: {
+                renderTo: runconList[0][i] + "_net",
+                type: 'spline',
+                events: {
+                    load: requestData
+                }
+            },
+            title: {
+                text: " net I/O"
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150,
+                maxZoom: 20 * 1000
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'kb',
+                    margin: 80
+                }
+            },
+            series: [{
+                name : 'input',
+                data : []
+            },{
+                name : 'output',
+                data : []
+            }]
+        })
+      )
+  }
+
+  for( i = 0; i < runconList[0].length; i++){
+    chart_block.push(
+        new Highcharts.Chart({
+            chart: {
+                renderTo: runconList[0][i] + "_block",
+                type: 'spline',
+                events: {
+                    load: requestData
+                }
+            },
+            title: {
+                text: " block I/O"
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150,
+                maxZoom: 20 * 1000
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'kb',
+                    margin: 80
+                }
+            },
+            series: [{
+                name : 'input',
+                data : []
+            },{
+                name : 'output',
+                data : []
+            }]
+        })
+      )
+  }
+
+  setInterval(requestData,2300);
+});
+
+</script>
+
+
+
+
+
+  </head>
+  <body class="vertical-layout vertical-menu 2-columns   menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-color="bg-chartbg" data-col="2-columns">
+
+<!--좌측 배너-->
+    <div class="main-menu menu-fixed menu-light menu-accordion    menu-shadow " data-scroll-to-active="true" data-img="/static/theme-assets/images/backgrounds/02.jpg">
+      <div class="navbar-header">
+        <ul class="nav navbar-nav flex-row">       
+          <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
+              <h3 class="brand-text" >Chameleon</h3></a></li>
+          <li class="nav-item d-md-none"><a class="nav-link close-navbar"><i class="ft-x"></i></a></li>
+        </ul>
+      </div>
+      <div class="main-menu-content">
+        <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+          <li class="active"><a href="/"><i class="ft-home"></i><span class="menu-title" data-i18n="">Dashboard</span></a>
+          </li>
+          <li class=" nav-item"><a href="/alarm"><i class="ft-layers"></i><span class="menu-title" data-i18n="">Alerting</span></a>
+          </li>
+          <li class=" nav-item"><a href="/live-data"><i class="ft-droplet"></i><span class="menu-title" data-i18n="">JsonData</span></a>
+          </li>
+        </ul>
+      </div>
+      <div class="navigation-background"></div>
+    </div>
+<!--좌측 배너-->
+
+
+<!-- fixed-top-->
+
+<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
+    <div class="navbar-wrapper">
+    <div class="navbar-container content">
+        <div class="collapse navbar-collapse show" id="navbar-mobile">
+        </div>
+    </div>
+    </div>
+</nav>
+
+<!-- ////////////////////////////////////////////////////////////////////////////-->
+
+
+
+<div class="app-content content">
+    <div class="content-wrapper">
+    <div class="content-body"><!-- Chart -->        
+    
+    <!-- 상단 그래프 공간 -->
+<div class="row match-height" style="margin-top:25px;">
+    <div class="col-9 pull-up">
+            <div id="cpu-data" style = "height:750px;"></div>
+    </div>
+    <div class="col-3 pull-up">
+            <div id = "mem-pi" style = "height:750px;"></div>
+    </div>
+</div>
+<!-- 상단 공간 끝-->
+
+
+
+<!-- Chart -->
+<!-- eCommerce statistic -->
+
+
+<!-- test start -->
+<div style="margin-top:50px;">
+  <div class = "col-xl-2 pull-up" style="float:left; ">
+
+      <table class="table bg-white" style="height:250px;">
+          <thead class="thead-dark">
+              <tr>
+                  <th> </th>
+                  <th scope="col" style="color:white; font-weight: bold; font-size:1.8em;">RunningContainer</th>
+              </tr>
+          </thead>
+          <tbody>    
+    {% if runconList %}
+        {% for name in runconList %}
+              <tr>
+                  <th scope="row"  style="font-size:1.8em; vertical-align : middle;">{{ loop.index }}</th>
+                  <td style="font-size:1.8em; vertical-align : middle;">{{ name }}</td>
+              </tr>
+        {% endfor %}
+    {% else %}
+              <tr>
+                  <th scope="row"> </th>
+                  <td style="color:#909090; font-size:1.8em; vertical-align : middle;">None</td>
+              </tr>
+    {% endif %}
+          </tbody>
+      </table>
+
+    {% if conList %}
+      <table class="table bg-white"  style="height:230px; ">
+          <thead class="thead-dark">
+              <tr>
+                  <th> </th>
+                  <th scope="col" style="color:white; font-weight: bold; font-size:1.8em;">Container List</th>
+              </tr>
+          </thead>
+          <tbody>
+        {% for name in conList %}
+              <tr>
+                  <th scope="row" style="font-size:1.6em; vertical-align : middle;">{{ loop.index}}</th>
+                  <td style="font-size:1.6em; vertical-align : middle;">{{ name }}</td>
+              </tr>
+        {% endfor %}
+          </tbody>
+      </table>
+    {% endif %}
+  </div>
+  
+  <div class="row" style="margin-top:25px;">
+
+{% if runconList %}
+  {% for con in runconList: %}
+    {%  set a = con + "_net" %}
+
+      <div class="col-xl-6 col-lg-16 col-md-12">
+
+        <h1 class="primary" style="font-weight: bold;">&nbsp&nbsp {{ con }} &nbsp&nbsp
+
+        {% set cpuid = con + "cpu" %}
+          <span id={{cpuid}} >&nbsp&nbsp cpu &nbsp&nbsp</span>
+        {% set memid = con + "mem" %}
+          <span id={{memid}} >mem</span>
+
+        </h1>
+
+          <div class="card pull-up ecom-card-1 bg-white">
+              <div class="card-content ecom-card2 height-250">
+                <div id={{ a }} style="height:250px;"></div>
+              </div>
+          </div>
+      </div>
+
+    {% set b = con + "_block" %}
+      <div class="col-xl-6 col-lg-16 col-md-12">
+        <h3>&nbsp</h3>
+          <div class="card pull-up ecom-card-1 bg-white">
+            <div class="card-content ecom-card2 height-250">
+                <h5 class="text-muted info position-absolute p-1">Block I/O</h5>
+              <!-- 블록 아이오 그래프 공간 -->
+                <div class="ct-golden-section">
+                    <div id={{ b }} style="height:250px;"></div>
+                </div>              
+            </div>
+          </div>
+      </div>    
+  {% endfor %}
+{% endif %}
+   
+
+  </div>
+  
+</div>
+<!-- test end -->
+
+<!--/ eCommerce statistic -->
+
+
+
+<!--/ Statistics -->
+        </div>
+      </div>
+    </div>
+    <!-- ////////////////////////////////////////////////////////////////////////////-->
+
+
+    <footer class="footer footer-static footer-light navbar-border navbar-shadow">
+      <div style="margin:10px 40px;" >
+        <p>
+          <h4 class="primary" style="float:left;">제작자 &nbsp&nbsp&nbsp</h4>
+            easyThem : ty, bh, de, ya, hj
+        </p>
+        <p>
+          <h4 class="primary" style="float:left;">제작 년도 &nbsp&nbsp&nbsp</h4>
+            2021.7.6 ~ 2021.11.29
+        </p>
+      </div>
+    </footer>
+
+
+
+
+  </body>
+</html>
